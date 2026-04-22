@@ -1,0 +1,23 @@
+<launch>
+   <param name="/use_sim_time" value="false" />
+   <node name="cartographer_node"
+         pkg="cartographer_ros"
+         type="cartographer_node"
+         args="-configuration_directory $(find cartographer_ros)/configuration_files -configuration_basename cartographer.lua"
+         output="screen">
+         <remap from="odom" to="/mavros/local_position/odom" />
+         <remap from="imu" to="/mavros/imu/data" />
+   </node>
+   <node name="cartographer_occupancy_grid_node"
+         pkg="cartographer_ros"
+         type="cartographer_occupancy_grid_node" />
+   <node name="robot_pose_publisher"
+         pkg="robot_pose_publisher"
+         type="robot_pose_publisher"
+         respawn="false"
+         output="screen" >
+         <param name="is_stamped" type="bool" value="true"/>
+         <remap from="robot_pose" to="/mavros/vision_pose/pose" />
+   </node>
+   <node pkg="tf" type="static_transform_publisher" name="base_to_laser_broadcaster" args="0 0 0 0 0 0 base_link laser 100" />
+</launch>
