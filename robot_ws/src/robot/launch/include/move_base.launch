@@ -1,0 +1,58 @@
+<launch>
+
+  <!-- 定义里程计话题参数（可在启动时外部传入） -->
+  <arg name="odom_topic" default="odom" />
+
+  <!-- 定义激光雷达话题参数 -->
+  <arg name="laser_topic" default="/scan"/>
+
+  <!-- 启动 move_base 节点（ROS导航核心节点） -->
+  <node pkg="move_base" type="move_base" name="move_base" output="screen">
+
+    <!-- 指定局部路径规划器为 TEB -->
+    <!-- TEB适用于非完整约束小车（如差速、Ackermann） -->
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/>
+
+    <!-- ================== 代价地图参数 ================== -->
+
+    <!-- 加载全局代价地图的通用参数（如机器人尺寸、膨胀层等） -->
+    <rosparam file="$(find robot)/params_costmap_common/costmap_common_params.yaml"
+              command="load" ns="global_costmap" />
+
+    <!-- 加载局部代价地图的通用参数 -->
+    <rosparam file="$(find robot)/params_costmap_common/costmap_common_params.yaml"
+              command="load" ns="local_costmap" />
+
+    <!-- 加载局部代价地图专属参数（滚动窗口、更新频率等） -->
+    <rosparam file="$(find robot)/params_costmap_common/local_costmap_params.yaml"
+              command="load" />
+
+    <!-- 加载全局代价地图专属参数（静态地图、更新方式等） -->
+    <rosparam file="$(find robot)/params_costmap_common/global_costmap_params.yaml"
+              command="load" />
+
+    <!-- ================== 规划器参数 ================== -->
+
+    <!-- TEB局部规划器参数（速度、加速度、轨迹优化等） -->
+    <rosparam file="$(find robot)/params_nav_common/teb_local_planner_params.yaml"
+              command="load" />
+
+    <!-- move_base整体参数（控制频率、恢复行为等） -->
+    <rosparam file="$(find robot)/params_nav_common/move_base_params.yaml"
+              command="load" />
+
+    <!-- 全局路径规划器参数（Navfn，基于Dijkstra/A*） -->
+    <rosparam file="$(find robot)/params_nav_common/navfn_global_planner_params.yaml"
+              command="load"/>
+
+    <!-- ================== 话题重映射 ================== -->
+
+    <!-- 将 move_base 默认订阅的 odom 重映射为你实际的里程计话题 -->
+    <remap from="odom" to="$(arg odom_topic)"/>
+
+    <!-- 将默认的 scan 重映射为你的激光雷达话题 -->
+    <remap from="scan" to="$(arg laser_topic)"/>
+
+  </node>
+
+</launch>
