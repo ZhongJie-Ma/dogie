@@ -1,6 +1,0 @@
-<launch>
-  <node pkg="tf" type="static_transform_publisher" name="move_to_footprint" args="0 0 0 0 0 0 move base_footprint 100" />
-  <node pkg="tf" type="static_transform_publisher" name="base_to_link" args="0 0 0.0216 0 0 0 base_footprint base_link 100" />
- </launch>
-
-

@@ -1,5 +1,0 @@
-<launch>
-    <arg name="map" default="scan.yaml" />
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find robot)/map/$(arg map)"/>
-    <remap from="/map" to="/map" />
-</launch>
