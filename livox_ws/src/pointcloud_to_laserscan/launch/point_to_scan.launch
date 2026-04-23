@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!-- 启动 'pointcloud_to_laserscan' 节点，用于将点云数据转换为激光扫描数据 -->
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan" output="screen">
+    
+        <!-- 将输入的点云话题从 '/cloud_registered_body' 映射到 'cloud_in' -->
+        <!--<remap from="cloud_in" to="/cloud_registered"/>-->
+        <remap from="cloud_in" to="/cloud_registered_body"/>
+
+        <!-- 将输出的扫描话题从 '/scan' 映射到 'scan' -->
+        <remap from="scan" to="/scan"/>
+        
+        <!-- 配置 pointcloud_to_laserscan 节点的 ROS 参数 -->
+        <rosparam>
+
+            <!-- 转换容差，用于调整点云在转换到激光扫描时的容差范围 -->
+            transform_tolerance: 0.01
+
+            <!-- 高度过滤参数，忽略高度小于 -0.1m 或大于 0.1m 的点 -->
+            min_height: -0.1
+            max_height: 0.2
+
+            <!-- 扫描的角度配置：设置扫描的最小和最大角度（用于 360 度扫描） -->
+            angle_min: -3.1415926 # -M_PI（扫描起始角度）
+            angle_max: 3.1415926 # M_PI（扫描结束角度）
+            
+            <!-- 每个扫描点之间的角度增量（单位：弧度） -->
+            angle_increment: 0.001 # 0.17度
+
+            <!-- 扫描时间间隔（用于传感器同步） -->
+            scan_time: 0.1
+
+            <!-- 激光扫描的最小和最大有效范围 -->
+            range_min: 0.1
+            range_max: 50
+
+            <!-- 启用无限远的范围值，用于检测障碍物 -->
+            use_inf: true
+            inf_epsilon: 1.0  # 用于将点视为“无穷远”的容差
+
+            <!-- 并发级别：0 自动检测核心数，1 单线程，2 到无穷大的并行处理级别 -->
+            concurrency_level: 0
+            
+            target_frame: body_2d
+        </rosparam>
+    </node>
+    <node pkg="pointcloud_to_laserscan" type="transtf_2d" name="transtf_2d" />
+    
+    <!--<node pkg="tf" type="static_transform_publisher" name="map_to_camera_init" args="0 0 0 0 0 0 map camera_init 100" />-->
+
+</launch>
