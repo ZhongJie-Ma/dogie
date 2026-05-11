@@ -31,7 +31,7 @@
 
 	<!-- load 2d map -->
 	<arg name="2dmap" default="my_scan.yaml" />
-	<node name = "map_server" pkg = "map_server" type = "map_server" args="/home/unitree/dog/robot_ws/src/robot/map/my_scan.yaml /map:=prior_map"/>
+	<node name = "map_server" pkg = "map_server" type = "map_server" args="$(find robot)/map/my_scan.yaml /map:=prior_map"/>
 	
 
 </launch>
